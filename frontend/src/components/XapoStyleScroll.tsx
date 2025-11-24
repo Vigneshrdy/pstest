@@ -312,34 +312,15 @@ const XapoStyleScroll = () => {
 
         </div>
 
-        {/* Progress Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
-          <div className="flex space-x-2">
-            {sections.map((_, index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full transition-all duration-700 ${
-                  index === currentSection ? 'bg-white' : 'bg-white/30'
-                }`}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Background Elements with left/right separators */}
+        {/* Background Elements with left separators */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -left-40 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl"></div>
           <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
           
-          {/* Left side separator lines */}
-          <div className="absolute top-1/2 left-0 w-1/3 h-px bg-gradient-to-r from-white/20 via-white/40 to-transparent"></div>
-          <div className="absolute top-1/3 left-0 w-1/4 h-px bg-gradient-to-r from-white/15 via-white/30 to-transparent"></div>
-          <div className="absolute top-2/3 left-0 w-1/5 h-px bg-gradient-to-r from-white/10 via-white/25 to-transparent"></div>
-          
-          {/* Right side separator lines */}
-          <div className="absolute top-1/2 right-0 w-1/3 h-px bg-gradient-to-l from-white/20 via-white/40 to-transparent"></div>
-          <div className="absolute top-1/3 right-0 w-1/4 h-px bg-gradient-to-l from-white/15 via-white/30 to-transparent"></div>
-          <div className="absolute top-2/3 right-0 w-1/5 h-px bg-gradient-to-l from-white/10 via-white/25 to-transparent"></div>
+          {/* Short left side lines for content differentiation */}
+          <div className="absolute top-1/2 left-6 w-16 h-px bg-gradient-to-r from-white/30 to-transparent"></div>
+          <div className="absolute top-1/3 left-6 w-12 h-px bg-gradient-to-r from-white/25 to-transparent"></div>
+          <div className="absolute top-2/3 left-6 w-20 h-px bg-gradient-to-r from-white/20 to-transparent"></div>
         </div>
       </div>
     </div>

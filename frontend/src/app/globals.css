@@ -14,23 +14,35 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+    @apply bg-revolut-black hover:bg-gray-800 text-white font-semibold py-3 px-8 rounded-full transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-revolut-blue focus:ring-offset-2;
   }
   
   .btn-secondary {
-    @apply bg-secondary-600 hover:bg-secondary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2;
+    @apply border border-revolut-black text-revolut-black hover:bg-revolut-lightGray font-semibold py-3 px-8 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-revolut-blue focus:ring-offset-2;
   }
   
   .btn-outline {
-    @apply border border-primary-600 text-primary-600 hover:bg-primary-50 font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+    @apply border border-revolut-blue text-revolut-blue hover:bg-revolut-blue hover:text-white font-semibold py-3 px-8 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-revolut-blue focus:ring-offset-2;
+  }
+  
+  .btn-bank {
+    @apply bg-yellow-500 hover:bg-yellow-400 text-black font-semibold py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2;
   }
   
   .card {
-    @apply bg-white rounded-lg shadow-soft p-6 border border-gray-100;
+    @apply bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow p-8 border border-gray-100;
   }
   
   .input-field {
-    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm;
+    @apply block w-full rounded-xl border-gray-200 shadow-sm focus:border-revolut-blue focus:ring-revolut-blue focus:ring-2 sm:text-sm bg-white;
+  }
+  
+  .revolut-gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  .revolut-card-hover {
+    @apply hover:shadow-xl hover:-translate-y-1 transition-all duration-300;
   }
   
   .form-label {
@@ -58,7 +70,19 @@
   }
   
   .loading-spinner {
-    @apply inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600;
+    @apply inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-bank-600;
+  }
+  
+  .mobile-banking-header {
+    @apply bg-gradient-to-r from-yellow-400 to-blue-600;
+  }
+  
+  .account-summary-card {
+    @apply bg-gray-800 rounded-2xl p-6 shadow-lg;
+  }
+  
+  .quick-action-btn {
+    @apply flex flex-col items-center p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200;
   }
 }
 

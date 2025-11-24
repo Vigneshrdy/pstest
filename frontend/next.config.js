@@ -15,7 +15,7 @@ const nextConfig = {
     ];
   },
   images: {
-    domains: ['localhost'],
+    domains: ['localhost', 'images.unsplash.com'],
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {

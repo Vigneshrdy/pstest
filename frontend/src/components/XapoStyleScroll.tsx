@@ -119,21 +119,31 @@ const XapoStyleScroll = () => {
   ];
 
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      if (!containerRef.current) return;
-      
-      const container = containerRef.current;
-      const containerTop = container.offsetTop;
-      const containerHeight = container.offsetHeight;
-      const scrolled = window.scrollY - containerTop;
-      const progress = scrolled / (containerHeight - window.innerHeight);
-      
-      setScrollProgress(Math.max(0, Math.min(1, progress)));
-      
-      // Calculate which section should be active with smoother transitions
-      const sectionProgress = progress * (sections.length - 1);
-      const newSection = Math.max(0, Math.min(sections.length - 1, Math.floor(sectionProgress + 0.3)));
-      setCurrentSection(newSection);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (!containerRef.current) return;
+          
+          const container = containerRef.current;
+          const containerTop = container.offsetTop;
+          const containerHeight = container.offsetHeight;
+          const scrolled = window.scrollY - containerTop;
+          const progress = Math.max(0, Math.min(1, scrolled / (containerHeight - window.innerHeight)));
+          
+          setScrollProgress(progress);
+          
+          // Smoother section transitions with eased thresholds
+          const sectionProgress = progress * (sections.length - 1);
+          const easedProgress = sectionProgress + Math.sin(sectionProgress * Math.PI) * 0.1;
+          const newSection = Math.max(0, Math.min(sections.length - 1, Math.round(easedProgress)));
+          
+          setCurrentSection(newSection);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -146,14 +156,20 @@ const XapoStyleScroll = () => {
     <div ref={containerRef} className="relative h-[500vh] bg-black text-white">
       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
         <div className="w-full max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+        <AnimatePresence mode="wait">
           
           {/* Left Content */}
           <motion.div 
             className="space-y-6"
             key={currentData.id}
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.2, ease: "easeInOut" }}
+            initial={{ opacity: 0, x: -30, y: 10 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
+            exit={{ opacity: 0, x: -30, y: -10 }}
+            transition={{ 
+              duration: 0.8, 
+              ease: [0.25, 0.46, 0.45, 0.94],
+              opacity: { duration: 0.6 }
+            }}
           >
             <div className="text-sm text-orange-400 font-medium tracking-wider">
               {currentData.leftCategory}
@@ -176,30 +192,44 @@ const XapoStyleScroll = () => {
               {sections.map((section, index) => {
                 const isActive = index === currentSection;
                 const distance = Math.abs(index - currentSection);
-                const scale = isActive ? 1.2 : Math.max(0.8, 1 - distance * 0.1);
-                const opacity = isActive ? 1 : Math.max(0.4, 1 - distance * 0.2);
+                const scale = isActive ? 1.15 : Math.max(0.85, 1 - distance * 0.08);
+                const opacity = isActive ? 1 : Math.max(0.5, 1 - distance * 0.15);
                 
                 return (
                   <div key={section.id}>
                     <motion.div 
-                      className={`cursor-pointer transition-all duration-700 ${
+                      className={`cursor-pointer ${
                         isActive ? 'text-white font-bold' : 'text-gray-500 font-medium'
                       }`}
-                      style={{ 
-                        transform: `scale(${scale})`,
-                        opacity: opacity,
+                      animate={{ 
+                        scale: scale,
+                        opacity: opacity
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 25,
+                        mass: 0.8
+                      }}
+                      style={{
                         transformOrigin: 'left center'
                       }}
                       onClick={() => setCurrentSection(index)}
                     >
-                      <div className={`${
-                        isActive ? 'text-lg' : 'text-sm'
-                      } transition-all duration-700`}>
+                      <motion.div 
+                        className={isActive ? 'text-lg' : 'text-sm'}
+                        animate={{ fontSize: isActive ? '1.125rem' : '0.875rem' }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                      >
                         {section.leftCategory}
-                      </div>
+                      </motion.div>
                     </motion.div>
                     {index < sections.length - 1 && (
-                      <div className="w-full h-px bg-gray-700 mt-4 opacity-30"></div>
+                      <motion.div 
+                        className="w-full h-px bg-gray-700 mt-4"
+                        animate={{ opacity: 0.3 }}
+                        transition={{ duration: 0.3 }}
+                      />
                     )}
                   </div>
                 );
@@ -211,9 +241,15 @@ const XapoStyleScroll = () => {
           <motion.div 
             className="flex justify-center"
             key={`phone-${currentData.id}`}
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.92, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 1.4, ease: "easeInOut" }}
+            exit={{ opacity: 0, scale: 0.92, y: -30 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 100,
+              damping: 20,
+              opacity: { duration: 0.5 }
+            }}
           >
             <div className="relative">
               <div className="w-80 h-[600px] bg-gray-900 rounded-[3rem] p-2 shadow-2xl">
@@ -307,9 +343,14 @@ const XapoStyleScroll = () => {
           <motion.div 
             className="space-y-6"
             key={`right-${currentData.id}`}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.2, ease: "easeInOut" }}
+            initial={{ opacity: 0, x: 30, y: 10 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
+            exit={{ opacity: 0, x: 30, y: -10 }}
+            transition={{ 
+              duration: 0.8, 
+              ease: [0.25, 0.46, 0.45, 0.94],
+              opacity: { duration: 0.6 }
+            }}
           >
             <h3 className="text-2xl lg:text-3xl font-bold leading-tight">
               {currentData.rightTitle}
@@ -319,6 +360,7 @@ const XapoStyleScroll = () => {
             </p>
           </motion.div>
 
+        </AnimatePresence>
         </div>
 
         {/* Background Elements with scroll-responsive lines */}
@@ -328,25 +370,27 @@ const XapoStyleScroll = () => {
           
           {/* Dynamic left side lines that move with scroll */}
           {sections.map((_, index) => {
-            const linePosition = 20 + (index * 15) - (scrollProgress * 60); // Lines move up as user scrolls
+            const basePosition = 20 + (index * 12);
+            const linePosition = basePosition - (scrollProgress * 50);
             const isNearActive = Math.abs(index - currentSection) <= 1;
-            const opacity = isNearActive ? 0.4 : 0.2;
-            const width = index === currentSection ? 24 : 16;
+            const opacity = index === currentSection ? 0.6 : (isNearActive ? 0.35 : 0.15);
+            const width = index === currentSection ? 28 : (isNearActive ? 20 : 16);
             
             return (
               <motion.div
                 key={`line-${index}`}
-                className="absolute left-6 h-px bg-gradient-to-r from-white/30 to-transparent"
-                style={{
-                  top: `${linePosition}%`,
+                className="absolute left-6 h-px bg-gradient-to-r from-white/40 to-transparent"
+                animate={{
+                  top: `${Math.max(10, Math.min(90, linePosition))}%`,
                   width: `${width}px`,
                   opacity: opacity
                 }}
-                animate={{ 
-                  width: width,
-                  opacity: opacity
+                transition={{
+                  type: "spring",
+                  stiffness: 120,
+                  damping: 20,
+                  opacity: { duration: 0.4, ease: "easeOut" }
                 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
               />
             );
           })}

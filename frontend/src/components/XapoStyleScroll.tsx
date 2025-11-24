@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
 interface ScrollSection {
@@ -171,23 +171,39 @@ const XapoStyleScroll = () => {
               </svg>
             </button>
 
-            {/* Navigation Menu with Separators */}
-            <div className="space-y-4 pt-8">
-              {sections.map((section, index) => (
-                <div key={section.id}>
-                  <div 
-                    className={`text-sm cursor-pointer transition-all duration-700 ${
-                      index === currentSection ? 'text-white font-semibold' : 'text-gray-500'
-                    }`}
-                    onClick={() => setCurrentSection(index)}
-                  >
-                    {section.leftCategory}
+            {/* Scroll-responsive Navigation Menu */}
+            <div className="space-y-6 pt-8">
+              {sections.map((section, index) => {
+                const isActive = index === currentSection;
+                const distance = Math.abs(index - currentSection);
+                const scale = isActive ? 1.2 : Math.max(0.8, 1 - distance * 0.1);
+                const opacity = isActive ? 1 : Math.max(0.4, 1 - distance * 0.2);
+                
+                return (
+                  <div key={section.id}>
+                    <motion.div 
+                      className={`cursor-pointer transition-all duration-700 ${
+                        isActive ? 'text-white font-bold' : 'text-gray-500 font-medium'
+                      }`}
+                      style={{ 
+                        transform: `scale(${scale})`,
+                        opacity: opacity,
+                        transformOrigin: 'left center'
+                      }}
+                      onClick={() => setCurrentSection(index)}
+                    >
+                      <div className={`${
+                        isActive ? 'text-lg' : 'text-sm'
+                      } transition-all duration-700`}>
+                        {section.leftCategory}
+                      </div>
+                    </motion.div>
+                    {index < sections.length - 1 && (
+                      <div className="w-full h-px bg-gray-700 mt-4 opacity-30"></div>
+                    )}
                   </div>
-                  {index < sections.length - 1 && (
-                    <div className="w-full h-px bg-gray-700 mt-4"></div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </motion.div>
 
@@ -206,14 +222,8 @@ const XapoStyleScroll = () => {
                   {/* Phone Screen Content */}
                   <div className="absolute inset-4 text-white">
                     
-                    {/* Status Bar */}
-                    <div className="flex justify-end items-center mb-6 text-xs">
-                      <div className="flex space-x-1">
-                        <div className="w-4 h-2 bg-white rounded-sm"></div>
-                        <div className="w-6 h-2 bg-white rounded-sm"></div>
-                        <div className="w-6 h-2 bg-green-500 rounded-sm"></div>
-                      </div>
-                    </div>
+                    {/* Status Bar - Removed charging indicators */}
+                    <div className="mb-8"></div>
 
                     {/* App Content */}
                     <div className="space-y-6">
@@ -287,8 +297,7 @@ const XapoStyleScroll = () => {
                     </div>
                   </div>
 
-                  {/* Home Indicator */}
-                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-white/30 rounded-full"></div>
+
                 </div>
               </div>
             </div>
@@ -312,15 +321,35 @@ const XapoStyleScroll = () => {
 
         </div>
 
-        {/* Background Elements with left separators */}
+        {/* Background Elements with scroll-responsive lines */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -left-40 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl"></div>
           <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
           
-          {/* Short left side lines for content differentiation */}
-          <div className="absolute top-1/2 left-6 w-16 h-px bg-gradient-to-r from-white/30 to-transparent"></div>
-          <div className="absolute top-1/3 left-6 w-12 h-px bg-gradient-to-r from-white/25 to-transparent"></div>
-          <div className="absolute top-2/3 left-6 w-20 h-px bg-gradient-to-r from-white/20 to-transparent"></div>
+          {/* Dynamic left side lines that move with scroll */}
+          {sections.map((_, index) => {
+            const linePosition = 20 + (index * 15) - (scrollProgress * 60); // Lines move up as user scrolls
+            const isNearActive = Math.abs(index - currentSection) <= 1;
+            const opacity = isNearActive ? 0.4 : 0.2;
+            const width = index === currentSection ? 24 : 16;
+            
+            return (
+              <motion.div
+                key={`line-${index}`}
+                className="absolute left-6 h-px bg-gradient-to-r from-white/30 to-transparent"
+                style={{
+                  top: `${linePosition}%`,
+                  width: `${width}px`,
+                  opacity: opacity
+                }}
+                animate={{ 
+                  width: width,
+                  opacity: opacity
+                }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+              />
+            );
+          })}
         </div>
       </div>
     </div>

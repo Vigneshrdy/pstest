@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import ScrollExpandMedia from '../components/ScrollExpandMedia'
+import XapoStyleScroll from '../components/XapoStyleScroll'
 import { 
   ArrowRightIcon, 
   ShieldCheckIcon, 
@@ -102,6 +103,9 @@ export default function HomePage() {
           </Link>
         </div>
       </ScrollExpandMedia>
+
+      {/* Xapo-Style Sticky Scroll Section */}
+      <XapoStyleScroll />
 
       {/* Trust Section */}
       <section className="py-20 bg-gray-50">
